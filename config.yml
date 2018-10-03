@@ -1,0 +1,12 @@
+# summary metrics file in csv format
+metrics_file: data/bj_mkn45_10pct_per_cell_summary_metrics.csv
+
+# tag to filter on
+tag: CB
+
+# output directory
+out_dir: data/splits
+
+# logging
+log_file: out.log
+level: DEBUG
