@@ -10,6 +10,9 @@ import logging
 
 def filter_bam_by_barcodes(barcodes, tag):
     """
+    This method expects to receive a bam file stream from stdin and streams
+    the filtered set of alignments to stdout.
+
     :param barcodes: list of barcodes to filter by.
     :param tag: tag to filter on.
     :param bam_file: bam file to filter.
