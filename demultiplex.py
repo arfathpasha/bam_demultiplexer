@@ -6,57 +6,53 @@ import yaml
 import glob
 
 
-def get_tag_list(cb_map, tag):
+def get_file_for_tag(tag_to_file_map, tag_value, odir, alignment_file):
+    # TODO make a class for this functionality
     """
-    Get list that is mapped to specified tag in cb_map.
+    Get a file handle to a file in the specified output dir,
+    for writing alignments with the specified tag_value.
 
-    :param cb_map:
-    :param tag:
-    :return:
+    :param tag_to_file_map: map from tag value to file handler
+    :param tag_value: tag value
+    :param odir: directory where the file should be written
+    :param alignment_file: handle to the alignment file
+    :return: File handle for the specified tag value.
     """
-    if tag not in cb_map.keys():
-        cb_map[tag] = []
+    if tag_value not in tag_to_file_map.keys():
+        tag_file_name = os.path.join(odir, tag_value + ".bam")
+        file_handle = pysam.AlignmentFile(tag_file_name, "w", template=alignment_file)
+        tag_to_file_map[tag_value] = file_handle
 
-    return cb_map[tag]
+    return tag_to_file_map[tag_value]
 
 
-def split_by_tag(tag, odir):
+def split_by_tag(tag_key, odir):
     """
     Split input sam file by specified tag and write one file per tag to the specified
     output dir.
-    :param tag
+    :param tag_key
     :param bam_file:
     :param odir
     """
-    logging.info('splitting bam files by tag '+tag)
+    logging.info('splitting bam files by tag ' + tag_key)
     alignment_file = pysam.AlignmentFile("-", "rb")  # stream in from stdin
 
     # split file by tag
-    print("reading " + tag + " tags...")
-    tag_to_alignment_map = {}
+    print("writing bam files, one per "+ tag_key +" tag value ...")
+    tag_to_file_map = {}
     read_count = 0
     for aligned_segment_obj in alignment_file:
         read_count += 1
-        sys.stdout.write("# reads: %d%%   \r" % (read_count))
+        sys.stdout.write("# alignments processed: %d%%   \r" % (read_count))
         sys.stdout.flush()
 
-        if aligned_segment_obj.has_tag(tag):
-            tag_file_obj = aligned_segment_obj.get_tag(tag)
-            tag_list = get_tag_list(tag_to_alignment_map, str(tag_file_obj))
-            tag_list.append(aligned_segment_obj)
+        if aligned_segment_obj.has_tag(tag_key):
+            tag_value_obj = aligned_segment_obj.get_tag(tag_key)
+            file_handle = get_file_for_tag(tag_to_file_map, str(tag_value_obj), odir, alignment_file)
+            file_handle.write(aligned_segment_obj)
         else:
-            tag_list = get_tag_list(tag_to_alignment_map, "undetermined")
-            tag_list.append(aligned_segment_obj)
-
-    # write reads by CB to files
-    print("writing bam files, one per cell...")
-    for tag in tag_to_alignment_map.keys():
-        tag_file_name = os.path.join(odir, tag+".bam")
-        outfile = pysam.AlignmentFile(tag_file_name, "w", template=alignment_file)
-
-        alignment_objs = tag_to_alignment_map[tag]
-        for alignment_segment_obj in alignment_objs:
-            outfile.write(alignment_segment_obj)
+            file_handle = get_file_for_tag(tag_to_file_map, 'undetermined', odir, alignment_file)
+            file_handle.write(aligned_segment_obj)
 
 
 def collate(idir, odir):
@@ -90,9 +86,6 @@ def convert_bam_to_fastq(idir, odir):
                     '-n',
                     '-F', '0x900',
                     file)
-
-
-    # samtools fastq -1 paired1.fq -2 paired2.fq -0 /dev/null -s /dev/null -n -F 0x900 TTTGTCATCCGCACGA-1_collated.bam
 
 
 
@@ -132,8 +125,11 @@ if __name__ == "__main__":
 
     convert_bam_to_fastq(collate_dir, fastq_dir)
 
+    # reset system ulimit
+    #reset_ulimit()
+
 
     # TODO: cleanup temp files
     # TODO: need to fail on reads that have differing seq, qual lengths
-    # TODO: think about streaming all the way through to fastq
     # TODO: test with bootstrap
+    # TODO: filter out sequences that have seq-qual len mismatch
