@@ -4,19 +4,23 @@ import csv
 import yaml
 import logging
 import argparse
+import collections
 
 
 def filter_by_sequence_quality_len():
     """
-        This method expects to receive a bam file stream from stdin and streams
-        the filtered set of alignments to stdout.
+    This method filters out alignment sequence segments whose segment length
+    differs from the quality string length.
+
+    This method expects to receive a bam file stream from stdin and streams
+    the filtered set of alignments to stdout.
 
         :param barcodes: list of barcodes to filter by.
         :param tag: tag to filter on.
         :param bam_file: bam file to filter.
         :return:
-        """
-    logging.info("filtering bam alignments by sequence-quality len mismatch...")
+    """
+    logging.info("filtering sequence segments that have sequence-quality len mismatch...")
 
     infile = pysam.AlignmentFile("-", "rb")  # stream in from stdin
 
@@ -24,23 +28,36 @@ def filter_by_sequence_quality_len():
 
     for alignment in infile:
         if alignment.query_alignment_length != len(alignment.query_alignment_qualities):
-            logging.info('seq-qual len mismatch, dropping sequence ' + alignment.to_string())  # drop alignment sequence
+            logging.warn('seq-qual len mismatch found, dropping sequence ' + alignment.to_string())  # drop alignment sequence
         else:
             outfile.write(alignment)
 
 
 
-def filter_by_barcodes(barcodes, tag):
+def filter_by_barcodes(tag, tag_values, filter_undetermined=False):
     """
+    This method filters out alignment sequence segments by tag value. If a
+    sequence segment with a tag value that is excluded from the specified
+    tag_values list is found, then that sequence segment is considered noisy and
+    is filtered out.
+
+    If the sequence segment does not contain the specified tag, then that sequence
+    segment is considered as undetermined.
+
     This method expects to receive a bam file stream from stdin and streams
     the filtered set of alignments to stdout.
 
-    :param barcodes: list of barcodes to filter by.
     :param tag: tag to filter on.
+    :param tag_values: list of tag values to filter by.
+    :param filter_undetermined: filter out undetermined sequence segment if set to true.
     :param bam_file: bam file to filter.
     :return:
     """
-    logging.info("filtering bam alignments by barcodes and tag=" + tag + " ...")
+    if tag is None or tag_values is None:
+        logging.error('Tag with None type not allowed for filter_by_barcodes method ')
+        sys.exit(1)
+
+    logging.info("filtering 'noisy' sequence segments by " + tag + " tag...")
 
     infile = pysam.AlignmentFile("-", "rb")  # stream in from stdin
 
@@ -49,13 +66,15 @@ def filter_by_barcodes(barcodes, tag):
     for alignment in infile:
 
         if alignment.has_tag(tag):
-            barcode = str(alignment.get_tag(tag))
-            if barcode in barcodes:
+            t_val = str(alignment.get_tag(tag))
+            if t_val in tag_values:
                 outfile.write(alignment)
             else:
-                logging.debug('dropping barcode '+barcode)  # drop alignment sequence
-        else:
+                logging.warn('dropping segment with tag_value '+t_val)
+        elif filter_undetermined is False:
             outfile.write(alignment)  # treat as undetermined alignment
+        else:
+            logging.warn('dropping undetermined segment with query_name ' + alignment.query_name)  
 
 
 def get_barcodes_from_summary_metrics(metrics_csv_file):
@@ -108,7 +127,7 @@ if __name__ == "__main__":
 
     if args.by_barcodes:
         barcodes = get_barcodes_from_summary_metrics(config["metrics_file"])
-        filter_by_barcodes(barcodes, config["tag"])
+        filter_by_barcodes(config["tag"], barcodes)
     elif args.by_seq_qual_len_mismatch:
         filter_by_sequence_quality_len()
     else:
