@@ -1,7 +1,4 @@
 import pysam
-import re
-import glob
-import os
 import sys
 import csv
 import yaml
@@ -10,7 +7,28 @@ import argparse
 
 
 def filter_by_sequence_quality_len():
-    pass
+    """
+        This method expects to receive a bam file stream from stdin and streams
+        the filtered set of alignments to stdout.
+
+        :param barcodes: list of barcodes to filter by.
+        :param tag: tag to filter on.
+        :param bam_file: bam file to filter.
+        :return:
+        """
+    logging.info("filtering bam alignments by sequence-quality len mismatch...")
+
+    infile = pysam.AlignmentFile("-", "rb")  # stream in from stdin
+
+    outfile = pysam.AlignmentFile("-", "wb", template=infile)  # stream out to stdout
+
+    for alignment in infile:
+        if alignment.query_alignment_length != len(alignment.query_alignment_qualities):
+            logging.info('seq-qual len mismatch, dropping sequence ' + alignment.to_string())  # drop alignment sequence
+        else:
+            outfile.write(alignment)
+
+
 
 def filter_by_barcodes(barcodes, tag):
     """
@@ -24,18 +42,18 @@ def filter_by_barcodes(barcodes, tag):
     """
     logging.info("filtering bam alignments by barcodes and tag=" + tag + " ...")
 
-    in_file = pysam.AlignmentFile("-", "rb")  # stream in from stdin
+    infile = pysam.AlignmentFile("-", "rb")  # stream in from stdin
 
-    outfile = pysam.AlignmentFile("-", "wb", template=in_file)  # stream out to stdout
+    outfile = pysam.AlignmentFile("-", "wb", template=infile)  # stream out to stdout
 
-    for alignment in in_file:
+    for alignment in infile:
 
         if alignment.has_tag(tag):
             barcode = str(alignment.get_tag(tag))
             if barcode in barcodes:
                 outfile.write(alignment)
             else:
-                logging.debug('dropping barcode '+barcode)  # drop alignment
+                logging.debug('dropping barcode '+barcode)  # drop alignment sequence
         else:
             outfile.write(alignment)  # treat as undetermined alignment
 
