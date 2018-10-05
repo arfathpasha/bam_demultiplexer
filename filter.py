@@ -98,6 +98,11 @@ def get_barcodes_from_summary_metrics(metrics_csv_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("-c",
+                        "--config",
+                        type=str,
+                        help="specify config file. Default=config.yml")
+
     parser.add_argument("-b",
                         "--by_barcodes",
                         help="Filter bam file by barcodes. The module expects to find "
@@ -115,7 +120,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    with open("config.yml", "r") as stream:
+    config_file = "config.yml"
+    if args.config is not None:
+        config_file = args.config
+
+    with open(config_file, "r") as stream:
         config = yaml.load(stream)
 
     logging.basicConfig(

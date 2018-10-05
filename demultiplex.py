@@ -4,6 +4,7 @@ import sys
 import logging
 import yaml
 import glob
+import argparse
 
 
 def get_file_for_tag(tag_to_file_map, tag_value, odir, alignment_file):
@@ -93,7 +94,19 @@ def convert_bam_to_fastq(idir, odir):
 
 if __name__ == "__main__":
 
-    with open("config.yml", "r") as stream:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-c",
+                        "--config",
+                        type=str,
+                        help="specify config file. Default=config.yml")
+
+    args = parser.parse_args()
+
+    config_file = "config.yml"
+    if args.config is not None:
+        config_file = args.config
+
+    with open(config_file, "r") as stream:
         config = yaml.load(stream)
 
     logging.basicConfig(
@@ -111,7 +124,7 @@ if __name__ == "__main__":
     if not os.path.exists(splits_dir):
         os.mkdir(splits_dir)
 
-    split_by_tag(tag, splits_dir)
+    split_by_tag(tag, splits_dir, DEBUG=False)
 
     # collate
     collate_dir = os.path.join(odir, 'collate')
