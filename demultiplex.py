@@ -26,25 +26,27 @@ def get_file_for_tag(tag_to_file_map, tag_value, odir, alignment_file):
     return tag_to_file_map[tag_value]
 
 
-def split_by_tag(tag_key, odir):
+def split_by_tag(tag_key, odir, DEBUG=True):
     """
-    Split input sam file by specified tag and write one file per tag to the specified
+    Split input bam file by specified tag and write one file per tag to the specified
     output dir.
-    :param tag_key
-    :param bam_file:
+
+    This method expects to receive an input bam file stream from stdin.
+
+    :param tag_key: tag
     :param odir
     """
-    logging.info('splitting bam files by tag ' + tag_key)
     alignment_file = pysam.AlignmentFile("-", "rb")  # stream in from stdin
 
     # split file by tag
-    print("writing bam files, one per "+ tag_key +" tag value ...")
+    print("splitting bam file, one per "+ tag_key +" tag value ...")
     tag_to_file_map = {}
     read_count = 0
     for aligned_segment_obj in alignment_file:
-        read_count += 1
-        sys.stdout.write("# alignments processed: %d%%   \r" % (read_count))
-        sys.stdout.flush()
+        if DEBUG:
+            read_count += 1
+            sys.stdout.write("# alignments processed: %d%%   \r" % (read_count))
+            sys.stdout.flush()
 
         if aligned_segment_obj.has_tag(tag_key):
             tag_value_obj = aligned_segment_obj.get_tag(tag_key)
@@ -96,7 +98,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         filename=config["log_file"],
-        level=config["level"],
+        level=config["log_level"],
         format="%(asctime)s: %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
     )
@@ -125,11 +127,8 @@ if __name__ == "__main__":
 
     convert_bam_to_fastq(collate_dir, fastq_dir)
 
-    # reset system ulimit
-    #reset_ulimit()
-
 
     # TODO: cleanup temp files
-    # TODO: need to fail on reads that have differing seq, qual lengths
-    # TODO: test with bootstrap
-    # TODO: filter out sequences that have seq-qual len mismatch
+    # TODO: test with/without bootstrap
+    # TODO: add unit tests
+    # TODO: incorporate mypy and pyannotate
