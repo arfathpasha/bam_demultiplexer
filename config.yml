@@ -9,4 +9,4 @@ out_dir: data/output
 
 # logging
 log_file: out.log
-level: DEBUG
+log_level: DEBUG

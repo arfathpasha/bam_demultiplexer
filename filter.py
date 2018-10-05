@@ -54,7 +54,7 @@ def filter_by_barcodes(tag, tag_values, filter_undetermined=False):
     :return:
     """
     if tag is None or tag_values is None:
-        logging.error('Tag with None type not allowed for filter_by_barcodes method ')
+        logging.error('Tag or tag values with None type not allowed for filter_by_barcodes method ')
         sys.exit(1)
 
     logging.info("filtering 'noisy' sequence segments by " + tag + " tag...")
@@ -74,7 +74,7 @@ def filter_by_barcodes(tag, tag_values, filter_undetermined=False):
         elif filter_undetermined is False:
             outfile.write(alignment)  # treat as undetermined alignment
         else:
-            logging.warn('dropping undetermined segment with query_name ' + alignment.query_name)  
+            logging.warn('dropping undetermined segment with query_name ' + alignment.query_name)
 
 
 def get_barcodes_from_summary_metrics(metrics_csv_file):
@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(
         filename=config["log_file"],
-        level=config["level"],
+        level=config["log_level"],
         format="%(asctime)s: %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
     )
