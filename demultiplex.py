@@ -119,6 +119,9 @@ if __name__ == "__main__":
     odir = config['out_dir']
     tag = config['tag']
 
+    if not os.path.exists(odir):
+        os.mkdir(odir)
+
     # split file by tag
     splits_dir = os.path.join(odir, 'splits')
     if not os.path.exists(splits_dir):
