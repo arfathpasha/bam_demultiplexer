@@ -130,7 +130,7 @@ if __name__ == "__main__":
     logging.basicConfig(
         filename=config["log_file"],
         level=config["log_level"],
-        format="%(asctime)s: %(message)s",
+        format="%(levelname)s\t%(asctime)s:\t%(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
     )
 
