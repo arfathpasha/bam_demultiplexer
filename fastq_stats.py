@@ -58,13 +58,15 @@ def validate(fq1_lines, fq2_lines):
     # r1, r2 line count
     len1 = len(fq1_lines)
     len2 = len(fq2_lines)
-    
+
     if len1 != len2:
         logging.error('different number of reads found: '+str(len1)+', '+str(len2))
         errors_found += 1
 
     if errors_found > 0:
-        print "Errors found! Check log file for list of errors"
+        print("Errors found! Check log file for list of errors")
+    else:
+        print("Fastq files are valid!")
 
     return errors_found
 
@@ -79,7 +81,7 @@ def summary_stat(fq1_lines, fq2_lines):
     """
     global stats
     global errors_found
-    stats['num_files'] += 1
+    stats['num_files'] += 2
     stats['total_reads'] += len(list(quadruple(fq1_lines))) + len(list(quadruple(fq2_lines)))
     stats['errors'] = errors_found
 
