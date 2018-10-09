@@ -20,11 +20,17 @@ def quadruple(iterable):
 errors_found = 0
 def validate(fq1_lines, fq2_lines):
     """
+    Checks for the following:
 
-    :param fq1_lines:
-    :param fq2_lines:
+    1. mismatched tag lines between the two files
+    2. sequence-quality length mismatch for reads in both files
+    3. different number of reads in the two files
+
+    :param fq1_lines:  lines from first of the pair of fastq files
+    :param fq2_lines:  lines from second of the pair of fastq files
     :return: 0 if pair is valid, else return 1
     """
+    global errors_found
     quad1 = quadruple(fq1_lines)  # (tag, sequence, +, quality)
     quad2 = quadruple(fq2_lines)  # (tag, sequence, +, quality)
     l_count = 1
@@ -47,7 +53,7 @@ def validate(fq1_lines, fq2_lines):
             logging.error("r2 sequence-quality length mismatch at line  " + str(l_count) + ": " + str(tuple2))
             errors_found += 1
 
-        l_count +=1
+        l_count +=4
 
     # r1, r2 line count
     len1 = len(list(quad1))
@@ -64,9 +70,17 @@ def validate(fq1_lines, fq2_lines):
 
 stats = {'num_files': 0, 'total_reads': 0, 'errors': 0}
 def summary_stat(fq1_lines, fq2_lines):
+    """
+       Collects summary stats from the specified file pairs.
+
+       :param fq1_lines:  lines from first of the pair of fastq files
+       :param fq2_lines:  lines from second of the pair of fastq files
+    """
+    global stats
+    global errors_found
     stats['num_files'] += 1
     stats['total_reads'] += len(list(quadruple(fq1_lines))) + len(list(quadruple(fq2_lines)))
-    stats['errors': errors_found]
+    stats['errors'] = errors_found
 
 
 if __name__ == "__main__":
