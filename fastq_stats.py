@@ -7,12 +7,12 @@ import yaml
 from itertools import izip
 
 def pairwise(iterable):
-    "s -> (s0, s1), (s2, s3), (s4, s5), ..."
+    "[s0, s1, s2, s3, s4, ...] -> (s0, s1), (s2, s3), (s4, s5), ..."
     aa = iter(iterable)
     return izip(aa, aa)
 
 def quadruple(iterable):
-    "s -> (s0, s1, s3, s4), (s5, s6, s7, s8), ..."
+    "[s0, s1, s2, s3, s4, s5, s6, s7, ...] -> (s0, s1, s3, s4), (s5, s6, s7, s8), ..."
     aa = iter(iterable)
     return izip(aa, aa, aa, aa)
 
@@ -56,10 +56,11 @@ def validate(fq1_lines, fq2_lines):
         l_count +=4
 
     # r1, r2 line count
-    len1 = len(list(quad1))
-    len2 = len(list(quad2))
+    len1 = len(fq1_lines)
+    len2 = len(fq2_lines)
+    
     if len1 != len2:
-        logging.error('different number of reads found in r1, r2: '+str(len1)+', '+str(len2))
+        logging.error('different number of reads found: '+str(len1)+', '+str(len2))
         errors_found += 1
 
     if errors_found > 0:
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     # processing
     logging.info('scanning '+i_dir+' for files ending with '+file_ext)
 
-    for fq1, fq2 in pairwise(sorted(glob.glob(os.path.join(i_dir+'*'+file_ext)))):
+    for fq1, fq2 in pairwise(sorted(glob.glob(os.path.join(i_dir+'/*'+file_ext)))):
         with open(fq1, 'r') as fq1_fh, \
              open(fq2, 'r') as fq2_fh:
             logging.info('validing pair '+fq1+' '+fq2)
