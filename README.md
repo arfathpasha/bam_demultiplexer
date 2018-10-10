@@ -11,6 +11,6 @@ Demultiplexes a merged BAM file by cell identifier. Entries that don't contain c
 $ virtualenv venv
 $ source venv/bin/activate
 
-$ time cat data/bj_mkn45_10pct_possorted_bam_10k_snippet.bam | python filter.py -c config.yml -b | python filter.py -c config.yml -s | python demultiplex.py -c config.yml
+$ time cat <bam_file> | python filter.py -c config.yml -b | python filter.py -c config.yml -s | python demultiplex.py -c config.yml
 
 $ deactivate
