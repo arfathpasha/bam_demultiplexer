@@ -84,10 +84,9 @@ def convert_bam_to_fastq(idir, odir):
     for file in glob.glob(os.path.join(idir, "*")):
         pysam.fastq('-1', os.path.join(odir, os.path.basename(file)[:-4]) + '_1.fq',
                     '-2', os.path.join(odir, os.path.basename(file)[:-4]) + '_2.fq',
-                    '-0', '/dev/null',
-                    '-s', '/dev/null',
+                    '-0', os.path.join(odir, os.path.basename(file)[:-4]) + '_other.fq',
+                    '-s', os.path.join(odir, os.path.basename(file)[:-4]) + '_singleton.fq',
                     '-n',
-                    '-F', '0x900',
                     file)
 
 
