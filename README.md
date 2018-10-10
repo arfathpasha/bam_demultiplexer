@@ -9,8 +9,9 @@ Demultiplexes a merged BAM file by cell identifier. Entries that don't contain c
 
 # Execution
 $ virtualenv venv
+$ pip install -r requirements.txt
 $ source venv/bin/activate
 
-$ time cat <bam_file> | python filter.py -c config.yml -b | python filter.py -c config.yml -s | python demultiplex.py -c config.yml
+$ time cat <bam_file> | python filter.py -c config.yml -b | python demultiplex.py -c config.yml
 
 $ deactivate
