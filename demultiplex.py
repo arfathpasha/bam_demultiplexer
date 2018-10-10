@@ -53,11 +53,9 @@ def split_by_tag(tag_key, odir, DEBUG=True):
             tag_value_obj = aligned_segment_obj.get_tag(tag_key)
             file_handle = get_file_for_tag(tag_to_file_map, str(tag_value_obj), odir, alignment_file)
             file_handle.write(aligned_segment_obj)
-            file_handle.flush()
         else:
             file_handle = get_file_for_tag(tag_to_file_map, 'undetermined', odir, alignment_file)
             file_handle.write(aligned_segment_obj)
-            file_handle.flush()
 
 
 def collate(idir, odir):
