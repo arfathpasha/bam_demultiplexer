@@ -2,9 +2,9 @@
 
 ## Functional:
 
-1. Demultiplex one or more bam files based on the optional CB cell identifier tag.
+1. Demultiplex bam files based on the optional CB (cell identifier) tag.
 
-2. Reconstruct the paired reads for each originating cell and output paired reads to _R1 and _R2 FASTQ files.
+2. Reconstruct the paired reads for each originating cell and output paired reads to _1 and _2 FASTQ files.
 
 3. For entries in bam file that do not contain cell identifier, group entries into a cell identifier named 'undetermined' and output into the corresponding FASTQ files.
 
@@ -12,13 +12,13 @@
 
 ## Non-functional:
 
-1. Stream processing.
+1. TODO: Stream processing.
 
 2. Use parallelization where possible.
 
 3. Logging.
 
-4. Unit tests.
+4. TODO: Unit tests.
 
 5. Cleanup any temp files in post processing step.
 
