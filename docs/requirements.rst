@@ -4,11 +4,14 @@
 
 1. Demultiplex bam files based on the optional CB (cell identifier) tag.
 
-2. Reconstruct the paired reads for each originating cell and output paired reads to _1 and _2 FASTQ files.
+2. User shall specify list of cell ids/barcodes on which to demultiplex.
 
-3. For entries in bam file that do not contain cell identifier, group entries into a cell identifier named 'undetermined' and output into the corresponding FASTQ files.
+3. Aligned reads associated with barcodes not contained in user specified list must be filtered out.
 
-4. If there is a length mismatch between sequence and quality, fail the processing for the entire cell identifier.
+4. Aligned reads that don't have CB tags must be assigned the special tag="undetermined".
+
+5. Reconstruct the paired reads for each originating cell and output paired reads to _1 and _2 FASTQ files.
+
 
 ## Non-functional:
 
@@ -22,4 +25,4 @@
 
 5. Cleanup any temp files in post processing step.
 
-6. Output stats obtained from processing to log and console out.
+6. TODO: Output stats obtained from processing to log and console out.
