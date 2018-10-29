@@ -6,4 +6,4 @@ The following steps are parallelized using Pypeliner.
 
 2. Collate demultiplexed bams
 
-3. Convert collated and demultiplexed bams to fastq
+3. Convert demultiplexed and collated bams to fastq
