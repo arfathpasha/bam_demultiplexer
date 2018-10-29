@@ -3,10 +3,11 @@ import os
 import logging
 import glob
 
-
 """
 Samtools functions required for conversion from bam to fastq. 
 """
+
+
 def collate(ifile, ofile):
     """
     Collate bam file
@@ -15,7 +16,7 @@ def collate(ifile, ofile):
     :param ofile: output collated bam
     """
 
-    logging.info('collating bam file '+str(ifile))
+    logging.info('collating bam file ' + str(ifile))
 
     pysam.collate("-o", ofile, ifile)
 
@@ -27,9 +28,9 @@ def fastq(ifile, ofile1, ofile2):
     :param ofile2: second file of fastq pair
     """
 
-    logging.info('generating fastq file for '+str(ifile))
+    logging.info('generating fastq file for ' + str(ifile))
 
     pysam.fastq('-1', ofile1,
                 '-2', ofile2,
-                    '-n',
-                    ifile)
+                '-n',
+                ifile)

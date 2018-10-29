@@ -5,11 +5,11 @@ Demultiplexes a BAM file by cell identifier and converts the demultiplexed bam f
 # Software Requirements
 - virtualenv
 - python 2.7.*
-- Ensure that the user ulimit (-n) for open files is larger than the number of expected demultiplexed bam files. 
+- Ensure that the user ulimit for open files is larger than the number of expected demultiplexed bam files `$ ulimit -n 4000` for example. 
 
 
 # Execution
-```
+```bash
 $ virtualenv -p /usr/bin/python2.7 venv
 $ pip install -r requirements.txt
 $ source venv/bin/activate

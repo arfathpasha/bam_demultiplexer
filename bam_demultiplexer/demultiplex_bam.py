@@ -60,12 +60,11 @@ class DemultiplexBam(object):
 
     def __get_file_for_tag(self, tag_to_file_map, tag_value):
         """
-        Get a file handle to a file in the specified output dir,
-        for writing alignments with the specified tag_value.
+        Get a file handle for the specified tag_value.
 
-        :param tag_to_file_map: map from tag value to file handler
+        :param tag_to_file_map: map from tag value to file handler that is used for caching file handles
         :param tag_value: tag value
-        :return: File handle for the specified tag value.
+        :return: File handle for the specified tag value
         """
 
         if tag_value not in tag_to_file_map.keys():
@@ -101,7 +100,7 @@ class DemultiplexBam(object):
             try:
                 file.close()
             except:
-                warnings('error closing file ' + file)
+                logging.error('error closing file ' + file)
 
         logging.info("num reads = " + str(read_count))
 

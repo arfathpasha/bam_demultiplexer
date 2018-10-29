@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     fileConfig("logging_config.ini")
 
-    logging.info("Starting pipeline")
+    logging.info("Starting bam_demultiplexer pipeline...")
 
     args = vars(parse_args())
 
@@ -58,7 +58,7 @@ if __name__ == "__main__":
               pypeliner.managed.TempOutputFile('collated', 'split'))
     )
 
-    # convert demultiplexed bams to fastq
+    # convert collated bams to fastq
     workflow.transform(
         name='fastq',
         axes=('split',),
@@ -67,5 +67,7 @@ if __name__ == "__main__":
                     pypeliner.managed.OutputFile(os.path.join(args['odir'], '{split}.fq1'), 'split'),
                     pypeliner.managed.OutputFile(os.path.join(args['odir'], '{split}.fq2'), 'split'))
     )
+
+    logging.info("Ending bam_demultiplexer pipeline...")
 
     pyp.run(workflow)
