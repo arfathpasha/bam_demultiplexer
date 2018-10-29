@@ -11,8 +11,9 @@ Demultiplexes a BAM file by cell identifier and converts the demultiplexed bam f
 # Execution
 ```
 $ virtualenv -p /usr/bin/python2.7 venv
-$ pip install -r requirements.txt
 $ source venv/bin/activate
+$ pip install --upgrade pip
+$ pip install -r requirements.txt
 
 $ time python bam_demultiplexer/pypeline.py \
 --barcode_csv test/data/bj_mkn45_10pct_per_cell_summary_metrics.csv  \
